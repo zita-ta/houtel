@@ -1,23 +1,32 @@
 <?php
 session_start();
 
-$host = "localhost";
-$user = "root";
-$pass = "";
-$db   = "hotel_zita";
+// ==========================================
+// KONEKSI DATABASE
+// ==========================================
 
-$koneksi = mysqli_connect($host, $user, $pass, $db);
+$host = getenv('MYSQLHOST') ?: 'localhost';
+$user = getenv('MYSQLUSER') ?: 'root';
+$pass = getenv('MYSQLPASSWORD') ?: '';
+$db   = getenv('MYSQLDATABASE') ?: 'hotel_zita';
+$port = getenv('MYSQLPORT') ?: 3306;
+
+$koneksi = mysqli_connect($host, $user, $pass, $db, $port);
 
 if (!$koneksi) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
-// Function untuk cek login
+mysqli_set_charset($koneksi, "utf8mb4");
+
+// ==========================================
+// FUNCTION UNTUK CEK LOGIN & ROLE
+// ==========================================
+
 function isLoggedIn() {
     return isset($_SESSION['user_id']) || isset($_SESSION['admin_id']);
 }
 
-// Function untuk cek role
 function isAdmin() {
     return isset($_SESSION['admin_id']);
 }
@@ -27,8 +36,8 @@ function isUser() {
 }
 
 function getUserRole() {
-    if(isset($_SESSION['admin_id'])) return 'admin';
-    if(isset($_SESSION['user_id'])) return 'user';
+    if (isset($_SESSION['admin_id'])) return 'admin';
+    if (isset($_SESSION['user_id'])) return 'user';
     return 'guest';
 }
 ?>
