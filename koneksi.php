@@ -1,20 +1,17 @@
 <?php
-$host     = getenv('MYSQLHOST') ?: 'localhost';
-$dbname   = getenv('MYSQLDATABASE') ?: 'hotel_zita';
-$username = getenv('MYSQLUSER') ?: 'root';
-$password = getenv('MYSQLPASSWORD') ?: '';
-$port     = getenv('MYSQLPORT') ?: '3306';
+session_start();
 
-try {
-    $conn = new PDO("mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4", $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Koneksi database gagal: " . $e->getMessage());
+$host = getenv('MYSQLHOST') ?: 'localhost';
+$user = getenv('MYSQLUSER') ?: 'root';
+$pass = getenv('MYSQLPASSWORD') ?: '';
+$db   = getenv('MYSQLDATABASE') ?: 'hotel_zita';
+$port = getenv('MYSQLPORT') ?: 3306;
+
+$koneksi = mysqli_connect($host, $user, $pass, $db, $port);
+
+if (!$koneksi) {
+    die("Connection failed: " . mysqli_connect_error());
 }
-
-// ==========================================
-// FUNCTION UNTUK CEK LOGIN & ROLE
-// ==========================================
 
 function isLoggedIn() {
     return isset($_SESSION['user_id']) || isset($_SESSION['admin_id']);
@@ -29,8 +26,8 @@ function isUser() {
 }
 
 function getUserRole() {
-    if (isset($_SESSION['admin_id'])) return 'admin';
-    if (isset($_SESSION['user_id'])) return 'user';
+    if(isset($_SESSION['admin_id'])) return 'admin';
+    if(isset($_SESSION['user_id'])) return 'user';
     return 'guest';
 }
 ?>
